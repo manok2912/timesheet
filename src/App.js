@@ -1,35 +1,34 @@
 import { useState } from 'react';
 import './App.css';
 import { compareAsc, format } from 'date-fns'
-import { listMonth } from './helpers/helper';
-import { getDaysInMonth } from './helpers/helper';
+import { listMonth, getDaysInMonth, projects } from './helpers/helper';
+import Table from './components/Table';
 
 function App() {
-  const listMonthLenght = listMonth.length;
   const [day, setDay] = useState(new Date())
+  const [edit, setEdit] = useState(false)
 
-  console.log();
   const handleMonthClickPrev = () => {
     var prevDay = new Date(day);
     prevDay.setMonth(day.getMonth() - 1);
     setDay(prevDay);
-    //setMonth(((month === 0) && listMonthLenght - 1) || month - 1);
   };
+
   const handleMonthClickNext = () => {
     var nextDay = new Date(day);
     nextDay.setMonth(day.getMonth() + 1);
     setDay(nextDay);
-    //setMonth((month + 1) % listMonthLenght);
   };
   return (
     <div className="App">
+
       <button onClick={handleMonthClickPrev}>prev</button>
       <h1>{`${listMonth[day.getMonth()]} ${day.getFullYear()}`}</h1>
       <button onClick={handleMonthClickNext}>next</button>
-      <div>
-        {getDaysInMonth(day.getMonth(), day.getFullYear()).map((date) =>
-          <p>{date.toDateString()}</p>
-        )}
+      <button onClick={() => setEdit(!edit)}>Edit</button>
+      <button onClick={""}>Save</button>
+      <div className='table-area'>
+        <Table day={day} edit={edit}/>
       </div>
     </div>
   );

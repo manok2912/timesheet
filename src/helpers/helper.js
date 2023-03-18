@@ -10,3 +10,26 @@ export const getDaysInMonth = (month, year) => {
     console.log(days);
     return days;
 }
+
+export const projects = [
+    {
+        key:'hgsi',
+        name: 'HGSI'
+    },
+    {
+        key:'koeing',
+        name: 'Koeing'
+    },
+    {
+        key:'wri',
+        name: 'WRI'
+    },
+    {
+        key:'mdrc',
+        name: 'MDRC'
+    },
+    {
+        key:'admin',
+        name: 'Admin'
+    },
+]
