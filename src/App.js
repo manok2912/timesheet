@@ -6,9 +6,7 @@ import Table from './components/Table';
 
 function App() {
   const [day, setDay] = useState(new Date())
-  const [edit, setEdit] = useState(false)
   const [tsdata, setTSData] = useState([])
-
 
   const handleMonthToggle = (step) => {
     setDay((day) => {
