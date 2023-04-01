@@ -7,7 +7,7 @@ export const getDaysInMonth = (month, year) => {
         days.push(new Date(date));
         date.setDate(date.getDate() + 1);
     }
-    console.log(days);
+    //console.log(days);
     return days;
 }
 

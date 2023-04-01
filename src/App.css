@@ -47,3 +47,6 @@ table, th, td {
   justify-content: center;
 }
 
+.table-area table tbody tr.sun, .table-area table tbody tr.sat{
+  background-color: yellow;
+}
