@@ -3,6 +3,7 @@ import './App.css';
 // import { compareAsc, format } from 'date-fns'
 import { listMonth } from './helpers/helper';
 import Table from './components/Table';
+import Modal from './components/Modal';
 
 function App() {
   const [day, setDay] = useState(new Date())
@@ -33,21 +34,22 @@ function App() {
         <div className="row align-items-center">
           <div className="col">
             <button className="btn btn-dark" onClick={() => handleMonthToggle(-1)}>
-            <i class="bi bi-arrow-bar-left"></i>
+            <i className="bi bi-arrow-bar-left"></i>
               {handleMonthToggleName(-1)}
             </button>
           </div>
           <div className="col">
+            {<Modal/>}
             <h1>{`${listMonth[day.getMonth()]} ${day.getFullYear()}`}</h1>
             <button className="btn btn-dark" onClick={() => handleSubmit()}>
               {"Save "}
-              <i class="bi bi-calendar-plus-fill"></i>
+              <i className="bi bi-calendar-plus-fill"></i>
             </button>
           </div>
           <div className="col">
             <button className="btn btn-dark" onClick={() => handleMonthToggle(+1)}>
               {handleMonthToggleName(+1)}
-              <i class="bi bi-arrow-bar-right"></i>
+              <i className="bi bi-arrow-bar-right"></i>
             </button>
           </div>
         </div>

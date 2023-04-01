@@ -53,7 +53,7 @@ const InlineEdit = ({ value, date, project, tsdata, setTSData }) => {
             name="hours"
             id="hours"
             aria-label="Hours name"
-            class="form-control"
+            className="form-control"
             ref={hoursRef}
             defaultValue={value}
             onChange={onChange}

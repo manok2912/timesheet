@@ -41,7 +41,7 @@ function Table({ day, tsdata, setTSData }) {
                     <tr key={index} className={date.toLocaleString('en', { weekday: 'short' }).toLowerCase()}>
                         {
                             date.getDay() === 0 || date.getDay() === 6 ?
-                                <td colSpan={projects.length + 1} class="table-danger" >{date.toDateString()}</td> :
+                                <td colSpan={projects.length + 1} className="table-danger" >{date.toDateString()}</td> :
                                 <td>{date.toDateString()}</td>
                         }
                         {projects.map((value, index) => {
@@ -58,7 +58,7 @@ function Table({ day, tsdata, setTSData }) {
                                 <td></td> :
                                 <td>{
                                     getCellTotal(date) > 8 ? <>
-                                        {getCellTotal(date)} <span class="badge text-bg-danger">8 hours is max</span>
+                                        {getCellTotal(date)} <span className="badge text-bg-danger">8 hours is max</span>
                                     </> : getCellTotal(date)
                                 }</td>
                         }
