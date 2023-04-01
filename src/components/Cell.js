@@ -27,24 +27,34 @@ const InlineEdit = ({ value, date, project, tsdata, setTSData }) => {
         console.log(hoursRef);
         if (hoursRef.current && hoursRef.current != '0') {
             const data = {
-                hours: hoursRef.current,
+                hours: Number(hoursRef.current),
                 date,
                 project: project.key
             }
-            console.log(data);
+            // console.log(data);
 
             setTSData((tsdata) => {
 
-                console.log(tsdata);
+                // console.log(tsdata);
 
-                const duplicates = tsdata = tsdata.some((element, index) => {
-                    console.log(element);
-                    return tsdata.indexOf(element) !== index
+                var ts = [...tsdata];
+
+                const duplicates = (ts) = ts.filter((element, index) => {
+                    // console.log(element);
+                    // console.log(date.getTime());
+                    // console.log(element.date.getTime());
+                    // console.log(element.date.getTime() == date.getTime());
+
+                    // console.log(project.key)
+                    // console.log(element.project)
+
+
+                    return element.date.getTime() !== date.getTime() || project.key !== element.project;
                 })
 
+                // console.log(duplicates);
 
-
-                return [...tsdata, data]
+                return [...duplicates, data]
             });
         }
     }
@@ -72,6 +82,7 @@ const InlineEdit = ({ value, date, project, tsdata, setTSData }) => {
             name="hours"
             id="hours"
             aria-label="Hours name"
+            class="form-control"
             ref={hoursRef}
             defaultValue={value}
             onChange={onChange}

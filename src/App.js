@@ -18,19 +18,44 @@ function App() {
     });
   }
 
+  const handleMonthToggleName = (step) => {
+    var current = new Date(day);
+    current.setMonth(day.getMonth() + step);
+    return ` ${listMonth[current.getMonth()]} ${current.getFullYear()} `
+  };
+
   const handleSubmit = () => {
     console.log("test");
   }
 
   return (
-    <div className="App">
-
-      <button onClick={() => handleMonthToggle(-1)}>prev</button>
-      <h1>{`${listMonth[day.getMonth()]} ${day.getFullYear()}`}</h1>
-      <button onClick={() => handleMonthToggle(+1)}>next</button>
-      <button onClick={() => handleSubmit()}>Save</button>
+    <div className="App container my-5">
+      {console.log(tsdata)}
+      <div className="container text-center my-3">
+        <div className="row align-items-center">
+          <div className="col">
+            <button className="btn btn-dark" onClick={() => handleMonthToggle(-1)}>
+            <i class="bi bi-arrow-bar-left"></i>
+              {handleMonthToggleName(-1)}
+            </button>
+          </div>
+          <div className="col">
+            <h1>{`${listMonth[day.getMonth()]} ${day.getFullYear()}`}</h1>
+            <button className="btn btn-dark" onClick={() => handleSubmit()}>
+              {"Save "}
+              <i class="bi bi-calendar-plus-fill"></i>
+            </button>
+          </div>
+          <div className="col">
+            <button className="btn btn-dark" onClick={() => handleMonthToggle(+1)}>
+              {handleMonthToggleName(+1)}
+              <i class="bi bi-arrow-bar-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
       <div className='table-area'>
-        <Table day={day} tsdata={tsdata} setTSData={setTSData}/>
+        <Table day={day} tsdata={tsdata} setTSData={setTSData} />
       </div>
     </div>
   );

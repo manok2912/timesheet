@@ -28,8 +28,4 @@ export const projects = [
         key:'mdrc',
         name: 'MDRC'
     },
-    {
-        key:'admin',
-        name: 'Admin'
-    },
 ]

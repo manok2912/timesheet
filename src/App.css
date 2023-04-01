@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+  font-family: monospace;
 }
 
 .App-logo {
@@ -37,16 +38,16 @@
   }
 }
 
-table, th, td {
+/* table, th, td {
   border: 1px solid black;
   border-collapse: collapse;
-}
+} */
 
 .table-area{
   display: flex;
   justify-content: center;
 }
 
-.table-area table tbody tr.sun, .table-area table tbody tr.sat{
+/* .table-area table tbody tr.sun, .table-area table tbody tr.sat{
   background-color: yellow;
-}
+} */
