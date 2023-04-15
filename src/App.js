@@ -29,7 +29,7 @@ function App() {
 
   return (
     <div className="App container my-5">
-      {console.log(tsdata)}
+      {/* {console.log(tsdata)} */}
       <div className="container text-center my-3">
         <div className="row align-items-center">
           <div className="col">
@@ -39,7 +39,7 @@ function App() {
             </button>
           </div>
           <div className="col">
-            {<Modal/>}
+            {<Modal day={day}/>}
             <h1>{`${listMonth[day.getMonth()]} ${day.getFullYear()}`}</h1>
             <button className="btn btn-dark" onClick={() => handleSubmit()}>
               {"Save "}

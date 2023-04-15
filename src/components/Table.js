@@ -3,17 +3,17 @@ import Cell from './Cell';
 
 function Table({ day, tsdata, setTSData }) {
     const getCellTotal = (currDate) => {
-        console.log(currDate);
-        console.log(tsdata);
+        // console.log(currDate);
+        // console.log(tsdata);
         var ts = [...tsdata];
         const currDateValues = (ts) = ts.filter((element, index) => {
             return element.date.getTime() === currDate.getTime();
         })
-        console.log(currDateValues);
+        // console.log(currDateValues);
         const sumValue = currDateValues.reduce(function (total, amount) {
             return Number(total) + Number(amount["hours"]);
         }, []);
-        console.log(sumValue);
+        // console.log(sumValue);
         return sumValue;
     };
     const getTotal = () => {
@@ -26,7 +26,7 @@ function Table({ day, tsdata, setTSData }) {
 
     return (
         <table className='table table-striped table-bordered'>
-            {console.log(tsdata)}
+            {/* {console.log(tsdata)} */}
             <thead>
                 <tr>
                     <th scope="col">Date/Project</th>

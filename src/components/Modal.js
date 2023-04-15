@@ -1,45 +1,56 @@
-import React from "react";
-import { useRef } from "react";
+import React, { useState } from "react";
+import { getMonths, listMonth, projects } from '../helpers/helper';
 
-function Modal() {
+function Modal({ day }) {
+    const [select, setSelect] = useState(new Date(day.getFullYear(), day.getMonth(), 1).getTime());
+    const [checkedItems, setCheckedItems] = useState([]);
+
+    const handleCheck = key => {
+        setCheckedItems((checkedItems) => {
+            const findIdx = checkedItems.indexOf(key);
+            if (findIdx > -1) {
+                checkedItems.splice(findIdx, 1);
+            } else {
+                checkedItems.push(key);
+            }
+            return checkedItems
+        });
+    }
     return (
         <>
             <button type="button" className="btn btn-dark" data-bs-toggle="modal" data-bs-target="#exampleModal">
                 Launch Projects
             </button>
-            <div className="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div className="modal fade" id="exampleModal" tabIndex="-1">
                 <div className="modal-dialog">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h1 className="modal-title fs-5" id="exampleModalLabel">Projects</h1>
-                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <h1 className="modal-title fs-5" >Projects</h1>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal"></button>
                         </div>
                         <div className="modal-body">
-                            <select class="form-select" aria-label="Default select example">
-                                <option selected>Open this select menu</option>
-                                <option value="1">One</option>
-                                <option value="2">Two</option>
-                                <option value="3">Three</option>
-                            </select>
-
-                            <div class="">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked />
-                                <label class="form-check-label" for="flexCheckChecked">
-                                    Checked checkbox
-                                </label>
-                            </div>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" checked />
-                                Checked switch checkbox input
-                            </div><div class="form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" checked />
-                                <label class="form-check-label" for="flexSwitchCheckChecked">Checked switch checkbox input</label>
-                            </div><div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" checked />
-                                <label class="form-check-label" for="flexSwitchCheckChecked">Checked switch checkbox input</label>
-                            </div><div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" checked />
-                                <label class="form-check-label" for="flexSwitchCheckChecked">Checked switch checkbox input</label>
+                            <div className="row">
+                                <div className="col-12 my-3">
+                                    <select className="form-select" onChange={e => setSelect(e.target.value)} value={select}>
+                                        {
+                                            getMonths(day.getMonth(), day.getFullYear()).map((current, index) => {
+                                                return <option key={index} value={current.getTime()}>{`${listMonth[current.getMonth()]} ${current.getFullYear()}`}</option>
+                                            })
+                                        }
+                                    </select>
+                                </div>
+                                {
+                                    projects.map((proj, index) => {
+                                        return <div className="col-3" key={index}>
+                                            <div className="form-check">
+                                                <input className="form-check-input" type="checkbox" id={proj.key} onChange={() => handleCheck(proj.key)} selected={checkedItems.includes(proj.key)} />
+                                                <label className="form-check-label" htmlFor="gridCheck">
+                                                    {proj.name}
+                                                </label>
+                                            </div>
+                                        </div>
+                                    })
+                                }
                             </div>
                         </div>
                         <div className="modal-footer">
