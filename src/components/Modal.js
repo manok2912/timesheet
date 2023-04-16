@@ -16,6 +16,13 @@ function Modal({ day }) {
             return checkedItems
         });
     }
+
+    const saveModal = () => {
+        console.log("trdtt");
+        console.log(select)
+        console.log(new Date(select))
+        console.log(checkedItems)
+    }
     return (
         <>
             <button type="button" className="btn btn-dark" data-bs-toggle="modal" data-bs-target="#exampleModal">
@@ -55,7 +62,7 @@ function Modal({ day }) {
                         </div>
                         <div className="modal-footer">
                             <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" className="btn btn-dark">Save</button>
+                            <button type="button" className="btn btn-dark" onClick={() => saveModal()}>Save</button>
                         </div>
                     </div>
                 </div>

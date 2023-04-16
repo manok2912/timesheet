@@ -24,6 +24,10 @@ function Table({ day, tsdata, setTSData }) {
         return sumValue;
     };
 
+    const getTodayClass = (date) => {
+        return date.toLocaleString('en', { dateStyle: 'short' }) === day.toLocaleString('en', { dateStyle: 'short' }) ? "today text-success" : "noday";
+    }
+
     return (
         <table className='table table-striped table-bordered'>
             {/* {console.log(tsdata)} */}
@@ -41,8 +45,8 @@ function Table({ day, tsdata, setTSData }) {
                     <tr key={index} className={date.toLocaleString('en', { weekday: 'short' }).toLowerCase()}>
                         {
                             date.getDay() === 0 || date.getDay() === 6 ?
-                                <td colSpan={projects.length + 1} className="table-danger" >{date.toDateString()}</td> :
-                                <td>{date.toDateString()}</td>
+                                <td colSpan={projects.length + 1} className={`table-danger ${getTodayClass(date)}`} >{date.toDateString()}</td> :
+                                <td className={getTodayClass(date)}>{date.toDateString()}</td>
                         }
                         {projects.map((value, index) => {
                             if (date.getDay() === 0 || date.getDay() === 6) {
