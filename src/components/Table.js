@@ -1,4 +1,4 @@
-import { getDaysInMonth, projects } from '../helpers/helper';
+import { getDaysInMonth, projects } from '../../helpers/helper';
 import Cell from './Cell';
 
 function Table({ day, tsdata, setTSData }) {

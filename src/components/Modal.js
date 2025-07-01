@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { getMonths, listMonth, projects } from '../helpers/helper';
+import { getMonths, listMonth, projects } from '../../helpers/helper';
 
 function Modal({ day }) {
     const [select, setSelect] = useState(new Date(day.getFullYear(), day.getMonth(), 1).getTime());

@@ -1,12 +1,11 @@
+'use client';
+
 import { useState } from 'react';
-import './App.css';
+import '../styles/App.css'
 // import { compareAsc, format } from 'date-fns'
-import { listMonth } from '../helpers/helper';
-import Table from './components/Table';
-import Modal from './components/Modal';
-import MaterialTable from './components/MaterialTable';
-import Tabs from '../components/Tabs';
 import dayjs from "dayjs";
+import MaterialTable from './MaterialTable';
+import Tabs from './Tabs';
 
 function App() {
   const [day, setDay] = useState(dayjs())
