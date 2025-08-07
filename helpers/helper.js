@@ -19,10 +19,10 @@ export const projects = [
   "JNJ",
   "WRI",
   "SSCAL",
-  "Koeing",
-  "MDRC",
-  "INX",
-  "HGSI",
+  "NHF",
+  "UNCP",
+  "BSC",
+  "ADMIN",
 ]
 
 
@@ -30,6 +30,25 @@ export const openDeleteConfirmModal = (row) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
       //deleteUser(row.original.id);
     }
+}
+
+export const normalizeToPercent = (values) => {
+  const total = values.reduce((sum, val) => sum + val, 0);
+  return total === 0 ? values.map(() => 0) : values.map((val) => (val / total) * 100);
+}
+
+export const getWeekOptions = (currentDay) => {
+  // Returns an array of week start dates (Monday) for the whole year
+  const yearStart = dayjs(currentDay).startOf('year').startOf('week');
+  const yearEnd = dayjs(currentDay).endOf('year').endOf('week');
+  const weeks = [];
+  let weekStart = yearStart;
+
+  while (weekStart.isBefore(yearEnd)) {
+    weeks.push(weekStart);
+    weekStart = weekStart.add(7, 'day');
+  }
+  return weeks;
 }
 
 export const getWeekNumber = (dateString) => {

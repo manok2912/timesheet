@@ -7,7 +7,6 @@ export default function HomePage() {
   return (
     <>
       <Container>
-        <h1>Welcome to Next.js App Router</h1>;
         <App />
       </Container>
     </>

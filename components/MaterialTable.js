@@ -20,15 +20,27 @@ const MaterialTable = ({ day }) => {
 
   useEffect(() => {
     const loadData = async () => {
-      const res = await fetch("/api/tasks");
-      const tasks = await res.json();
-      console.log("Fetched weekDates:", weekDates);
-      console.log("Fetched tasks:", tasks);
-      setData(tasks);
-      setLoading(false);
+      try {
+        // Get start and end dates of the week
+        const startDate = weekDates[0];
+        const endDate = weekDates[weekDates.length - 1];
+        
+        // Fetch data with week parameters
+        const res = await fetch(`/api/tasks?start=${startDate}&end=${endDate}`);
+        const tasks = await res.json();
+        
+        console.log("Fetched weekDates:", weekDates);
+        console.log("Fetched tasks:", tasks);
+        
+        setData(tasks);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error loading data:", error);
+        setLoading(false);
+      }
     };
     loadData();
-  }, []);
+  }, [day]); // Add weekDates as dependency
 
   // ✅ Memoized: Sample data
   const TDdata = useMemo(
@@ -59,8 +71,55 @@ const MaterialTable = ({ day }) => {
         header: "Project",
         editVariant: "select",
         editSelectOptions: projects,
-
         size: 70,
+        footer: 'Total',
+        Footer: () => {
+          return <span style={{ fontSize: "0.775rem", color: "rgba(0, 0, 0, 0.87)", fontWeight: 700 }}>Total</span>;
+        }
+      },
+      {
+        accessorKey: "total",
+        header: "Total",
+        Cell: ({ row }) => {
+          const timeline = row.original.timeline || {};
+          const total = weekDates.reduce((sum, date) => {
+            const val = Number(timeline[date]);
+            return !isNaN(val) ? sum + val : sum;
+          }, 0);
+          return <span style={{ fontSize: "0.75rem", color: "#444" }}>{total} hrs</span>;
+        },
+        Footer: ({ table }) => {
+          const allRows = table.getRowModel().rows;
+
+          // Grand total for all projects (sum of all rows)
+          const projectGrandTotal = allRows.reduce((sum, row) => {
+            const timeline = row.original.timeline || {};
+            const rowTotal = weekDates.reduce((subtotal, date) => {
+              const val = Number(timeline[date]);
+              return !isNaN(val) ? subtotal + val : subtotal;
+            }, 0);
+            return sum + rowTotal;
+          }, 0);
+
+          // Grand total for all days (sum for each day across all projects)
+          const weekGrandTotal = weekDates.reduce((sum, date) => {
+            const dayTotal = allRows.reduce((subtotal, row) => {
+              const timeline = row.original.timeline || {};
+              const val = Number(timeline[date]);
+              return !isNaN(val) ? subtotal + val : subtotal;
+            }, 0);
+            return sum + dayTotal;
+          }, 0);
+
+          return (
+            <div style={{ fontSize: "0.75rem", color: "#444", fontWeight: 500 }}>
+              <span>Project: {projectGrandTotal} hrs</span>
+              <br />
+              <span>Week: {weekGrandTotal} hrs</span>
+            </div>
+          );
+        },
+        size: 90,
       },
       ...weekDates.map((date) => ({
         id: date,
@@ -69,9 +128,11 @@ const MaterialTable = ({ day }) => {
         Cell: ({ cell }) => {
           const value = cell.getValue();
           return value !== undefined && value !== "" ? (
-            `${value} hrs`
+            <span style={{ fontSize: "0.75rem", color: "#444" }}>
+              {value} hrs
+            </span>
           ) : (
-            <span style={{ color: "#999" }}>—</span>
+            <span style={{ color: "#999", fontSize: "0.75rem" }}>—</span>
           );
         },
         muiEditTextFieldProps: {
@@ -87,39 +148,12 @@ const MaterialTable = ({ day }) => {
             const value = row.timeline?.[date];
             return sum + (value ? Number(value) : 0);
           }, 0);
-          return <span>Total: {total} hrs</span>;
+          return <span style={{ fontSize: "0.75rem", color: "#444", fontWeight: 500 }}>{total} hrs</span>;
         },
-        size: 90,
+        size: 85,
       })),
-      {
-        accessorKey: "total",
-        header: "Total",
-        Cell: ({ row }) => {
-          const timeline = row.original.timeline || {};
-          const total = weekDates.reduce((sum, date) => {
-            const val = Number(timeline[date]);
-            return !isNaN(val) ? sum + val : sum;
-          }, 0);
-          return <span>{total} hrs</span>;
-        },
-        Footer: ({ table }) => {
-          const allRows = table.getRowModel().rows;
-
-          const grandTotal = allRows.reduce((sum, row) => {
-            const timeline = row.original.timeline || {};
-            const rowTotal = weekDates.reduce((subtotal, date) => {
-              const val = Number(timeline[date]);
-              return !isNaN(val) ? subtotal + val : subtotal;
-            }, 0);
-            return sum + rowTotal;
-          }, 0);
-
-          return <strong>Total: {grandTotal} hrs</strong>;
-        },
-        size: 80,
-      },
     ],
-    [weekDates]
+    [weekDates, setData]
   );
   console.log("Data:", data);
 
@@ -140,29 +174,85 @@ const MaterialTable = ({ day }) => {
       getRowId={(row) => row.id}
       displayColumnDefOptions={{
         "mrt-row-actions": {
-          size: 100, // Try 120, 140, etc. if needed
+          size: 50, // Reduced from 100 to 50
           grow: false,
+          muiTableHeadCellProps: {
+            align: 'center',
+          },
+          muiTableBodyCellProps: {
+            align: 'center',
+          },
         },
       }}
       renderRowActions={({ row, table }) => (
-        <Box sx={{ display: "flex", gap: "0.5rem", overflow: "visible" }}>
+        <Box sx={{ display: "flex", gap: "0.25rem", overflow: "visible" }}>
           <Tooltip title="Edit">
-            <IconButton onClick={() => table.setEditingRow(row)}>
-              <EditIcon />
+            <IconButton size="small" onClick={() => table.setEditingRow(row)}>
+              <EditIcon fontSize="small" />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Delete">
+          <Tooltip title="Delete Week Entries">
             <IconButton
+              size="small"
               color="error"
-              onClick={() => openDeleteConfirmModal(row)}
+              onClick={async () => {
+                try {
+                  if (!window.confirm('Are you sure you want to delete this week\'s entries?')) {
+                    return;
+                  }
+
+                  // Get the dates to be deleted
+                  const datesToDelete = weekDates.filter(date => row.original.timeline?.[date]);
+
+                  if (datesToDelete.length === 0) {
+                    alert('No entries found for this week');
+                    return;
+                  }
+
+                  const response = await fetch(`/api/tasks/${row.original.id}/week`, {
+                    method: 'DELETE',
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                      dates: datesToDelete,
+                      start: weekDates[0],
+                      end: weekDates[weekDates.length - 1]
+                    })
+                  });
+
+                  if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Failed to delete');
+                  }
+
+                  // Update UI by removing only the week's entries
+                  setData(prevData => 
+                    prevData.map(item => {
+                      if (item.id === row.original.id) {
+                        const newTimeline = { ...item.timeline };
+                        weekDates.forEach(date => delete newTimeline[date]);
+                        return {
+                          ...item,
+                          timeline: newTimeline
+                        };
+                      }
+                      return item;
+                    })
+                  );
+
+                } catch (error) {
+                  console.error('Error deleting week entries:', error);
+                  alert(`Failed to delete: ${error.message}`);
+                }
+              }}
             >
-              <DeleteIcon />
+              <DeleteIcon fontSize="small" />
             </IconButton>
           </Tooltip>
         </Box>
       )}
       onCreatingRowSave={async ({ row, values, table }) => {
-        console.log("Creating row:", row, values, table);
         try {
           const { project, ...rest } = values;
 
@@ -171,51 +261,58 @@ const MaterialTable = ({ day }) => {
             return;
           }
 
-          // Build the timeline object by filtering only numeric entries
-          const timeline = Object.entries(rest).reduce((acc, [date, value]) => {
-            if (value && !isNaN(value)) {
-              acc[date] = Number(value);
-            }
-            return acc;
-          }, {});
+          // Use project name (lowercase) as ID
+          const newId = project.toLowerCase();
 
-          // Construct the final row
+          // Check if project already exists in current week
+          const projectExists = data.some(item => 
+            item.project.toLowerCase() === project.toLowerCase()
+          );
+
+          if (projectExists) {
+            alert("Project already exists for this week.");
+            return;
+          }
+
+          // Build timeline object
+          const timeline = {};
+          Object.entries(rest).forEach(([date, value]) => {
+            if (value && !isNaN(value) && value !== "") {
+              timeline[date] = Number(value);
+            }
+          });
+
           const newRow = {
-            id: project.toLowerCase(),
+            id: newId,
             project,
             timeline,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
           };
 
-          console.log("New row to save:", newRow);
+          console.log("Sending new row:", newRow);
 
-          // Optional: Save to backend
-          // await fetch('/api/project', { ... })
-          // ✅ Send to backend
           const response = await fetch("/api/tasks", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(newRow),
+            body: JSON.stringify(newRow)
           });
 
-          if (!response.ok) throw new Error("Failed to save");
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Failed to save");
+          }
 
-          // Optional: get the saved row from response
           const savedRow = await response.json();
-          console.log("Saved row:", savedRow);
+          setData(prevData => [...prevData, savedRow]);
+          table.setCreatingRow(null);
 
-          // Add to table
-          setData(savedRow);
-          table.setCreatingRow(null); //exit creating mode
         } catch (error) {
-          console.error("Error saving row:", error);
-          alert("Failed to save row.");
+          console.error("Error creating row:", error);
+          alert(`Failed to create row: ${error.message}`);
         }
-        // Handle row creation logic here
       }}
       onEditingRowSave={async ({ row, values, table }) => {
-        // Handle row editing logic here
-        console.log("Editing row:", row, values);
-
         try {
           const { project, ...rest } = values;
 
@@ -224,43 +321,56 @@ const MaterialTable = ({ day }) => {
             return;
           }
 
-          // Build the updated timeline
-          const timeline = Object.entries(rest).reduce((acc, [date, value]) => {
-            if (value && !isNaN(value)) {
-              acc[date] = Number(value);
+          // Build timeline object with only valid numeric values
+          const timeline = {};
+          Object.entries(rest).forEach(([date, value]) => {
+            if (value && !isNaN(value) && value !== "") {
+              timeline[date] = Number(value);
             }
-            return acc;
-          }, {});
-
-          const updatedRow = {
-            id: project.toLowerCase(),
-            project,
-            timeline,
-          };
-
-          // ✅ Send to backend
-          const response = await fetch("/api/tasks", {
-            method: "POST", // or PUT if your API expects it
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(updatedRow),
           });
 
-          if (!response.ok) throw new Error("Failed to update");
+          const updatedRow = {
+            id: row.original.id,
+            project: project,
+            timeline: timeline
+          };
+
+          console.log("Sending updated row:", updatedRow);
+
+          const response = await fetch(`/api/tasks/${row.original.id}`, {
+            method: "PUT",
+            headers: { 
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(updatedRow)
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Failed to update");
+          }
 
           const savedRow = await response.json();
-          console.log("Saved row:", savedRow);
+          console.log("Received updated row:", savedRow);
 
-          // Find and update the row by index
-          setData(savedRow);
+          // Update table data immediately
+          setData(prevData => 
+            prevData.map(item => 
+              item.id === savedRow.id ? savedRow : item
+            )
+          );
+          
+          table.setEditingRow(null);
 
-          table.setEditingRow(null); //exit editing mode
         } catch (error) {
-          console.error("Error editing row:", error);
-          alert("Failed to edit row.");
+          console.error("Error updating row:", error);
+          alert(`Failed to update row: ${error.message}`);
         }
       }}
       renderTopToolbarCustomActions={({ table }) => (
         <Button
+          size="small"
+          color="primary"
           variant="contained"
           onClick={() => {
             table.setCreatingRow(true); //simplest way to open the create row modal with no default values
@@ -272,7 +382,7 @@ const MaterialTable = ({ day }) => {
             // );
           }}
         >
-          Create New User
+          Add Project
         </Button>
       )}
     />

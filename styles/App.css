@@ -1,6 +1,6 @@
 .App {
   text-align: center;
-  font-family: monospace;
+  font-family: 'Geist Mono', monospace;
 }
 
 .App-logo {
@@ -36,4 +36,15 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.tag:first-of-type {
+      border-radius: 50px 0px 0px 50px;
+}
+ .tag:last-of-type {
+       border-radius: 0px 50px 50px 0px;
+}
+
+.tag:last-of-type>.slider-button {
+		 display:none !important;
 }

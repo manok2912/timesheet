@@ -7,6 +7,7 @@ import Modal from './components/Modal';
 import MaterialTable from './components/MaterialTable';
 import Tabs from '../components/Tabs';
 import dayjs from "dayjs";
+import React from 'react';
 
 function App() {
   const [day, setDay] = useState(dayjs())
@@ -35,11 +36,22 @@ function App() {
     setDay(prev => prev.add(delta, "day"));
   };
 
+  // Debug font-family
+  const [computedFont, setComputedFont] = useState('');
+  const testRef = React.useRef();
+  React.useEffect(() => {
+    if (testRef.current) {
+      setComputedFont(window.getComputedStyle(testRef.current).fontFamily);
+    }
+  }, []);
+
   return (
     <div className="App container my-5">
-
+      <div ref={testRef} style={{fontSize: 20, marginBottom: 16, border: '1px dashed #ccc', padding: 8}}>
+        Test font: The quick brown fox jumps over the lazy dog.<br/>
+        <span style={{fontSize: 14, color: '#888'}}>Computed font-family: {computedFont}</span>
+      </div>
       <Tabs day={day} shiftWeek={shiftWeek} />
-
       <MaterialTable day={day}/>
 
 

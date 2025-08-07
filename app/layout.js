@@ -5,7 +5,7 @@ export default function RootLayout({ children }) {
         <meta charSet="UTF-8" />
         <link rel="icon" href="/favicon.ico" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>React App</title>
+        <title>Timesheet App</title>
         <meta name="description" content="Web site created..." />
       </head>
       <body>
